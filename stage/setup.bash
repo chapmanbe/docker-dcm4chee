@@ -13,25 +13,25 @@ mkdir -p $DCM4CHEE_HOME
 cd $DCM4CHEE_HOME
 
 # Download the binary package for DCM4CHEE
-curl -G http://colocrossing.dl.sourceforge.net/project/dcm4che/dcm4chee/2.17.1/dcm4chee-2.17.1-mysql.zip > /stage/dcm4chee-2.17.1-mysql.zip
-unzip -q /stage/dcm4chee-2.17.1-mysql.zip
-DCM_DIR=$DCM4CHEE_HOME/dcm4chee-2.17.1-mysql
+curl -G http://iweb.dl.sourceforge.net/project/dcm4che/dcm4chee/2.18.1/dcm4chee-2.18.1-mysql.zip > /stage/dcm4chee-2.18.1-mysql.zip
+unzip -q /stage/dcm4chee-2.18.1-mysql.zip
+DCM_DIR=$DCM4CHEE_HOME/dcm4chee-2.18.1-mysql
 
 # Download the binary package for JBoss
-curl -G http://colocrossing.dl.sourceforge.net/project/jboss/JBoss/JBoss-4.2.3.GA/jboss-4.2.3.GA-jdk6.zip > /stage/jboss-4.2.3.GA-jdk6.zip
+curl -G http://superb-dca2.dl.sourceforge.net/project/jboss/JBoss/JBoss-4.2.3.GA/jboss-4.2.3.GA-jdk6.zip > /stage/jboss-4.2.3.GA-jdk6.zip
 unzip -q /stage/jboss-4.2.3.GA-jdk6.zip
 JBOSS_DIR=$DCM4CHEE_HOME/jboss-4.2.3.GA
 
 # Download the Audit Record Repository (ARR) package
-curl -G http://colocrossing.dl.sourceforge.net/project/dcm4che/dcm4chee-arr/3.0.11/dcm4chee-arr-3.0.11-mysql.zip > /stage/dcm4chee-arr-3.0.11-mysql.zip
-unzip -q /stage/dcm4chee-arr-3.0.11-mysql.zip
-ARR_DIR=$DCM4CHEE_HOME/dcm4chee-arr-3.0.11-mysql
+curl -G http://iweb.dl.sourceforge.net/project/dcm4che/dcm4chee-arr/4.1.0/dcm4chee-arr-4.1.0-mysql.zip > /stage/dcm4chee-arr-4.1.0-mysql.zip
+unzip -q /stage/dcm4chee-arr-4.1.0-mysql.zip
+ARR_DIR=$DCM4CHEE_HOME/dcm4chee-arr-4.1.0-mysql
 
 # Copy files from JBoss to dcm4chee
 $DCM_DIR/bin/install_jboss.sh jboss-4.2.3.GA > /dev/null
 
 # Copy files from the Audit Record Repository (ARR) to dcm4chee
-$DCM_DIR/bin/install_arr.sh dcm4chee-arr-3.0.11-mysql > /dev/null
+$DCM_DIR/bin/install_arr.sh dcm4chee-arr-4.1.0-mysql > /dev/null
 
 # Install and set up MySQL
 mysql_install_db
@@ -42,7 +42,7 @@ mysql -uroot < /stage/create_dcm4chee_databases.sql
 # Load the 'pacsdb' database schema
 mysql -upacs -ppacs pacsdb < $DCM_DIR/sql/create.mysql
 # The ARR setup script needs to be patched
-sed "s/type=/engine=/g" $ARR_DIR/sql/dcm4chee-arr-mysql.ddl > fixed.ddl
+sed "s/type=/engine=/g" $ARR_DIR/sql/create-arr-mysql.ddl > fixed.ddl
 mv fixed.ddl $ARR_DIR/sql/dcm4chee-arr-mysql.ddl
 # Load the 'arrdb' database schema
 mysql -uarr -parr arrdb < $ARR_DIR/sql/dcm4chee-arr-mysql.ddl
